@@ -48,6 +48,6 @@ docker exec -ti web python manage.py migrate
 docker exec -it web python manage.py createsuperuser
 ```
 
-Проект запущен и доступен по [адресу](http://158.160.21.82/)
+Проект запущен и доступен по [адресу](http://158.160.10.76/)
 
 ### Автор: Валентин Ефремов.
