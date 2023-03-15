@@ -133,27 +133,19 @@ class RecipeSerializer(serializers.ModelSerializer):
             })
         return data
 
-
-    @staticmethod
-    def create_ingredients(ingredients, recipe):
-        for ingredient in ingredients:
-            IngredientAmount.objects.create(
-                recipe=recipe, ingredient=ingredient['id'],
-                amount=ingredient['amount']
-            )
-
-    @staticmethod
-    def create_tags(tags, recipe):
-        for tag in tags:
-            recipe.tags.add(tag)
-
     def create(self, validated_data):
         author = self.context.get('request').user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(author=author, **validated_data)
-        self.create_tags(tags, recipe)
-        self.create_ingredients(ingredients, recipe)
+        ingredients_list = []
+        for ingredient in ingredients:
+            ingredient_amount, status = (
+                AmountIngredient.objects.get_or_create(**ingredient)
+            )
+            ingredients_list.append(ingredient_amount)
+        recipe.ingredients.set(ingredients_list)
+        recipe.tags.set(tags)
         return recipe
 
     def to_representation(self, instance):
@@ -164,8 +156,14 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.tags.clear()
         IngredientAmount.objects.filter(recipe=instance).delete()
-        self.create_tags(validated_data.pop('tags'), instance)
-        self.create_ingredients(validated_data.pop('ingredients'), instance)
+        ingredients_list = []
+        for ingredient in ingredients:
+            ingredient_amount, status = (
+                AmountIngredient.objects.get_or_create(**ingredient)
+            )
+            ingredients_list.append(ingredient_amount)
+        instance.ingredients.set(ingredients_list)
+        instance.tags.set(tags)
         return super().update(instance, validated_data)
 
 
