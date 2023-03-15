@@ -100,8 +100,6 @@ class Recipe(models.Model):
 
 
 class IngredientAmount(models.Model):
-     """ Количество ингредиентов в блюде."""
-
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,

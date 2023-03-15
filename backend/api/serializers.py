@@ -111,7 +111,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                     'ingredients': 'Ингредиенты должны быть уникальными!'
                 })
             ingredients_list.append(ingredient_id)
-            amount = ingredient['amount']
 
         tags = data['tags']
         if not tags:
@@ -141,7 +140,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_amount, status = (
-                AmountIngredient.objects.get_or_create(**ingredient)
+                IngredientAmount.objects.get_or_create(**ingredient)
             )
             ingredients_list.append(ingredient_amount)
         recipe.ingredients.set(ingredients_list)
@@ -155,11 +154,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.tags.clear()
+        tags = validated_data.pop('tags')
         IngredientAmount.objects.filter(recipe=instance).delete()
+        ingredients = validated_data.pop('ingredients')
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_amount, status = (
-                AmountIngredient.objects.get_or_create(**ingredient)
+                IngredientAmount.objects.get_or_create(**ingredient)
             )
             ingredients_list.append(ingredient_amount)
         instance.ingredients.set(ingredients_list)
