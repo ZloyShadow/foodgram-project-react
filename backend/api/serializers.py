@@ -101,15 +101,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'author', 'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time')
 
-    def validate(self, data):
-        ingredients = data['ingredients']
-        validate_ingredients(ingredients)
-        tags = data['tags']
-        validate_tags(tags)
-        cooking_time = data['cooking_time']
-        validate_coockingtime(cooking_time)
-        return data
-
     def validate_tags(self, tags):
         if not tags:
             raise serializers.ValidationError({
@@ -138,6 +129,15 @@ class RecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                 'cooking_time': 'Время приготовления должно быть больше 0!'
             })
+
+    def validate(self, data):
+        ingredients = data['ingredients']
+        validate_ingredients(ingredients)
+        tags = data['tags']
+        validate_tags(tags)
+        cooking_time = data['cooking_time']
+        validate_coockingtime(cooking_time)
+        return data
 
     def create(self, validated_data):
         author = self.context.get('request').user
