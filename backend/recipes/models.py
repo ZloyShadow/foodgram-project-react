@@ -50,6 +50,32 @@ class Tag(models.Model):
         return self.name
 
 
+class IngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='amounts',
+        verbose_name='Ингредиент'
+    )
+    amount = models.PositiveSmallIntegerField(
+        'Количество ингредиента',
+        default = 0,
+        validators=(
+            MinValueValidator(
+                1, message='Количество не может быть меньше 1'),),
+    )
+
+    class Meta:
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('ingredient', 'recipe',),
+                name='unique ingredient amount',
+            ),
+        )
+
+
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
@@ -97,32 +123,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class IngredientAmount(models.Model):
-    ingredient = models.ForeignKey(
-        Ingredient,
-        on_delete=models.CASCADE,
-        related_name='amounts',
-        verbose_name='Ингредиент'
-    )
-    amount = models.PositiveSmallIntegerField(
-        'Количество ингредиента',
-        default = 0,
-        validators=(
-            MinValueValidator(
-                1, message='Количество не может быть меньше 1'),),
-    )
-
-    class Meta:
-        verbose_name = 'Количество ингредиента'
-        verbose_name_plural = 'Количество ингредиентов'
-        constraints = (
-            models.UniqueConstraint(
-                fields=('ingredient', 'recipe',),
-                name='unique ingredient amount',
-            ),
-        )
 
 
 class Favorite(models.Model):
