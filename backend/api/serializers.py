@@ -139,7 +139,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         RecipeSerializer.validate_coockingtime(cooking_time)
         return data
 
-    def ingridients_list(self, ingredients_list):
+    def ingridients_list(self, ingredients, ingredients_list):
         for ingredient in ingredients:
             ingredient_amount, status = (
                 IngredientAmount.objects.get_or_create(**ingredient)
@@ -153,7 +153,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         ingredients_list = []
         recipe = Recipe.objects.create(author=author, **validated_data)
-        serializers.ingredients_list(ingredients_list)
+        serializers.ingredients_list(ingredients, ingredients_list)
         recipe.ingredients.set(ingredients_list)
         recipe.tags.set(tags)
         return recipe
@@ -168,7 +168,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         ingredients_list = []
-        serializers.ingredients_list(validated_data)
+        serializers.ingredients_list(ingredients ,ingredients_list)
         instance.ingredients.set(ingredients_list)
         instance.tags.set(tags)
         return super().update(instance, validated_data)
