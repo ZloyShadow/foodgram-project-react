@@ -41,6 +41,7 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     filter_backends = [IngredientSearchFilter]
     search_fields = ('^name',)
 
+
 class FavoriteViewSet(ModelViewSet):
     """
     ViewSet для работы с избранным.
