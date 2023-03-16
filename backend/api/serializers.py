@@ -103,17 +103,16 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def validate_tags(self, tags):
         if not tags:
-            raise serializers.ValidationError({
-                'tags': 'Нужно выбрать хотя бы один тэг!'
-            })
-        tags_list = []
-        if tags.objects.filter(tag.exists()):
-            for tag in tags:
-                if tag in tags_list:
-                    raise serializers.ValidationError({
-                        'tags': 'Тэги должны быть уникальными!'
-                    })
-                tags_list.append(tag)
+            raise serializers.ValidationError({ 
+                'tags': 'Нужно выбрать хотя бы один тэг!' 
+            }) 
+        tags_list = [] 
+        for tag in tags: 
+            if tag in tags_list: 
+                raise serializers.ValidationError({ 
+                    'tags': 'Тэги должны быть уникальными!' 
+                }) 
+            tags_list.append(tag) 
 
     def validate_ingredients(self, ingredients):
         ingredients_list = []
@@ -149,14 +148,13 @@ class RecipeSerializer(serializers.ModelSerializer):
                 IngredientAmount.objects.get_or_create(**ingredient)
             )
             ingredients_list.append(ingredient_amount)
-        recipe.ingredients.set(ingredients_list)
-        recipe.tags.set(tags)
-        return validated_data
 
     def create(self, validated_data):
         author = self.context.get('request').user
         recipe = Recipe.objects.create(author=author, **validated_data)
         serializers.ingredients_list(validated_data)
+        recipe.ingredients.set(ingredients_list)
+        recipe.tags.set(tags)
         return recipe
 
     def to_representation(self, instance):
@@ -167,6 +165,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.tags.clear()
         serializers.ingredients_list(validated_data)
+        instance.ingredients.set(ingredients_list) 
+        instance.tags.set(tags) 
         return super().update(instance, validated_data)
 
 
