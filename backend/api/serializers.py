@@ -107,6 +107,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 'tags': 'Нужно выбрать хотя бы один тэг!'
             })
         tags_list = []
+        if tags.objects.filter(tag.exists())
         for tag in tags:
             if tag in tags_list:
                 raise serializers.ValidationError({
@@ -139,11 +140,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         RecipeSerializer.validate_coockingtime(cooking_time)
         return data
 
-    def create(self, validated_data):
-        author = self.context.get('request').user
+    def ingridients_list(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(author=author, **validated_data)
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_amount, status = (
@@ -152,6 +151,12 @@ class RecipeSerializer(serializers.ModelSerializer):
             ingredients_list.append(ingredient_amount)
         recipe.ingredients.set(ingredients_list)
         recipe.tags.set(tags)
+        return validated_data
+
+    def create(self, validated_data):
+        author = self.context.get('request').user
+        recipe = Recipe.objects.create(author=author, **validated_data)
+        serializers.ingredients_list(validated_data)
         return recipe
 
     def to_representation(self, instance):
@@ -161,17 +166,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.tags.clear()
-        tags = validated_data.pop('tags')
-        IngredientAmount.objects.filter(recipe=instance).delete()
-        ingredients = validated_data.pop('ingredients')
-        ingredients_list = []
-        for ingredient in ingredients:
-            ingredient_amount, status = (
-                IngredientAmount.objects.get_or_create(**ingredient)
-            )
-            ingredients_list.append(ingredient_amount)
-        instance.ingredients.set(ingredients_list)
-        instance.tags.set(tags)
+        serializers.ingredients_list(validated_data)
         return super().update(instance, validated_data)
 
 
