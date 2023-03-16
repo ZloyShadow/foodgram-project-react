@@ -41,6 +41,21 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     filter_backends = [IngredientSearchFilter]
     search_fields = ('^name',)
 
+class FavoriteViewSet(ModelViewSet):
+    """
+    ViewSet для работы с избранным.
+    """
+    @action(detail=True, methods=["POST"],
+            permission_classes=[IsAuthenticated])
+    def favorite(self, request, pk):
+        return self.post_method_for_actions(
+            request=request, pk=pk, serializers=FavoriteSerializer)
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk):
+        return self.delete_method_for_actions(
+            request=request, pk=pk, model=Favorite)
+
 
 class RecipeViewSet(ModelViewSet):
     """
@@ -74,17 +89,11 @@ class RecipeViewSet(ModelViewSet):
         model_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=["POST"],
-            permission_classes=[IsAuthenticated])
-    def favorite(self, request, pk):
-        return self.post_method_for_actions(
-            request=request, pk=pk, serializers=FavoriteSerializer)
 
-    @favorite.mapping.delete
-    def delete_favorite(self, request, pk):
-        return self.delete_method_for_actions(
-            request=request, pk=pk, model=Favorite)
-
+class ShoppingCartViewSet(ModelViewSet):
+    """
+    ViewSet для работы с корзиной.
+    """
     @action(detail=True, methods=["POST"],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
