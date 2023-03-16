@@ -107,13 +107,13 @@ class RecipeSerializer(serializers.ModelSerializer):
                 'tags': 'Нужно выбрать хотя бы один тэг!'
             })
         tags_list = []
-        if tags.objects.filter(tag.exists())
-        for tag in tags:
-            if tag in tags_list:
-                raise serializers.ValidationError({
-                    'tags': 'Тэги должны быть уникальными!'
-                })
-            tags_list.append(tag)
+        if tags.objects.filter(tag.exists()):
+            for tag in tags:
+                if tag in tags_list:
+                    raise serializers.ValidationError({
+                        'tags': 'Тэги должны быть уникальными!'
+                    })
+                tags_list.append(tag)
 
     def validate_ingredients(self, ingredients):
         ingredients_list = []
