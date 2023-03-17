@@ -47,6 +47,9 @@ docker exec -ti web python manage.py migrate
 ```
 docker exec -it web python manage.py createsuperuser
 ```
+## Документация к API
+API документация доступна по ссылке (создана с помощью redoc):
+[http://158.160.10.76/api/docs/](http://158.160.10.76/api/docs/)
 
 Проект запущен и доступен по [адресу](http://158.160.10.76/)
 
