@@ -131,10 +131,10 @@ class RecipeSerializer(serializers.ModelSerializer):
             })
 
     def validate(self, data):
-        ingredients = data['ingredients']
         tags = data['tags']
         RecipeSerializer.validate_tags(tags)
         cooking_time = data['cooking_time']
+        RecipeSerializer.validate_coockingtime(cooking_time)
         return data
 
     def ingridients_add(self, ingredients, ingredients_list):
