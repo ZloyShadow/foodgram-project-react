@@ -130,13 +130,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 'cooking_time': 'Время приготовления должно быть больше 0!'
             })
 
-    def validate(self, data):
-        tags = data['tags']
-        RecipeSerializer.validate_tags(tags)
-        cooking_time = data['cooking_time']
-        RecipeSerializer.validate_coockingtime(cooking_time)
-        return data
-
     def ingridients_add(self, ingredients, ingredients_list):
         for ingredient in ingredients:
             ingredient_amount, status = (
