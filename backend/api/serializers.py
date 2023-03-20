@@ -136,7 +136,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 IngredientAmount.objects.get_or_create(**ingredient)
             )
             ingredients_list.append(ingredient_amount)
-        return ingredients_list
 
     def create(self, validated_data):
         author = self.context.get('request').user
